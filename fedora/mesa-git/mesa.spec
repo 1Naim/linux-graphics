@@ -8,9 +8,9 @@
 %define version_string 24.2.0
 %global version_major %(ver=%{version_string}; echo ${ver%.*.*})
 
-%define commit b8f8926026f71ccfa7d2d6adce56c7976a9fe9a0
+%define commit 3b6e2475e4dcde79fe09f982618db41422431609
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global commit_date 20240701.10
+%global commit_date 20240629.05
 %global gitrel .%{commit_date}.%{shortcommit}
 
 %ifnarch s390x
@@ -95,6 +95,7 @@ Source1:        Mesa-MLAA-License-Clarification-Email.txt
 # https://bugzilla.redhat.com/show_bug.cgi?id=1560481
 #Patch7:         0001-gallium-Disable-rgb10-configs-by-default.patch
 Patch1:         001-disable-proc_macro2-unstable-features.patch
+Patch2:         29876.patch
 
 BuildRequires:  meson >= 1.3.0
 BuildRequires:  cbindgen
@@ -383,6 +384,7 @@ The drivers with support for the Vulkan API.
 %prep
 %setup -q -c
 %autosetup -n mesa-%{commit} -p1
+patch -p1 -i %{PATCH2}
 cp %{SOURCE1} docs/
 
 %build
@@ -400,7 +402,7 @@ export MESON_PACKAGE_CACHE_DIR="%{cargo_registry}/"
 %rewrite_wrap_file quote
 %rewrite_wrap_file syn
 %rewrite_wrap_file unicode-ident
-%endif 
+%endif
 
 # We've gotten a report that enabling LTO for mesa breaks some games. See
 # https://bugzilla.redhat.com/show_bug.cgi?id=1862771 for details.
@@ -759,7 +761,7 @@ popd
   https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/27593
   If we do a native build, regardless of the host architecture and we
   build Anv or Iris, we need intel-clc. So force building that tool.
- 
+
 * Sun Feb 04 2024 Mihai Vultur <xanto@egaming.ro
   Enable imagination-experimental (PowerVR) Vulkan Driver.
   Enable nouveau-experimental for Nvidia Drivers. For Kernel 6.7+
@@ -776,14 +778,14 @@ popd
   An update on the linker will now refuse to create binaries with a loadable
   memory segment that has read, write and execute permissions set.
   mesa creates one unless "glx-read-only-text" is enabled.
- 
+
 * Sat Nov 11 2023 Mihai Vultur <mihaivultur7@gmail.com>
   Add new drivers to the list: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/26129
- 
+
 * Wed Oct 25 2023 Mihai Vultur <mihaivultur7@gmail.com>
   Various modifications and adjustments to more closely follow the official spec.
   + hdlcd_dri.so
- 
+
 * Tue Feb 28 2023 Mihai Vultur <mihaivultur7@gmail.com>
   According to https://gitlab.freedesktop.org/mesa/mesa/-/commit/a06ab9849db7fdf8f5194412f0c5a15abd8ece9b
   Vdpau support for r300 has been dropped.
@@ -854,7 +856,7 @@ popd
 - Set vulkan-layers=device-select,overlay since upstream commit 54fe5b04
 
 * Fri Dec 11 2020 Mihai Vultur <xanto@egaming.ro>
-- Set osmesa=true since upstream commit ee802372180a2b4460cc7abb53438e45c6b6f1e4 
+- Set osmesa=true since upstream commit ee802372180a2b4460cc7abb53438e45c6b6f1e4
 
 * Wed Nov 25 2020 Mihai Vultur <xanto@egaming.ro>
 - meson: __meson_auto_features default to disabled
@@ -886,7 +888,7 @@ popd
 * Sun Oct 06 2019 Mihai Vultur <xanto@egaming.ro>
 - Architecture specific builds might run asynchronous.
 - This might cause that same package build for x86_64 will be different when
--  built for i686. This is problematic when we want to install multilib packages. 
+-  built for i686. This is problematic when we want to install multilib packages.
 - Convert the specfile to template and use it to generate the actual script.
 - This will prevent the random failues and mismatch between arch versions.
 
