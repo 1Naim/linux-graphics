@@ -384,7 +384,6 @@ The drivers with support for the Vulkan API.
 %prep
 %setup -q -c
 %autosetup -n mesa-%{commit} -p1
-patch -p1 -i %{PATCH2}
 cp %{SOURCE1} docs/
 
 %build
